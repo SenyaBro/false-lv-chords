@@ -1,0 +1,242 @@
+# .gitignore
+# false-lv-chords
+#
+# Keep source code, docs, configs, tests, and pipeline definitions in Git.
+# Keep biomedical data, secrets, model artifacts, generated outputs, caches,
+# and local runtime files out of Git.
+
+# ---------------------------------------------------------------------
+# Environment variables and secrets
+# ---------------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*.secret
+secrets/
+credentials/
+credentials.*
+service-account*.json
+token*.json
+
+# ---------------------------------------------------------------------
+# Python environments and local tooling
+# ---------------------------------------------------------------------
+
+.venv/
+venv/
+env/
+ENV/
+
+# Keep .python-version tracked.
+# .python-version
+
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------
+# Package/build artifacts
+# ---------------------------------------------------------------------
+
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ---------------------------------------------------------------------
+# uv
+# ---------------------------------------------------------------------
+
+# Keep uv.lock tracked for reproducibility.
+# uv.lock
+
+# ---------------------------------------------------------------------
+# DVC
+# ---------------------------------------------------------------------
+
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# Keep DVC metadata and pipeline files tracked:
+# .dvc/
+# *.dvc
+# dvc.yaml
+# params.yaml
+
+# ---------------------------------------------------------------------
+# Raw and processed biomedical data
+# ---------------------------------------------------------------------
+
+# Raw data must never be committed.
+data/raw/**/*
+!data/raw/**/
+!data/raw/**/metadata.yaml
+!data/raw/**/README.md
+
+# Interim data are generated and should not be committed.
+data/interim/**/*
+!data/interim/**/
+!data/interim/**/README.md
+
+# Processed datasets are generated; keep only manifest/readme if needed.
+data/processed/**/*
+!data/processed/**/
+!data/processed/manifest.csv
+!data/processed/README.md
+
+# Project-level data docs may be tracked.
+!data/README.md
+
+# Common local dataset files.
+data/final_analysis_dataset.xlsx
+data/*.xlsx
+data/*.xls
+data/*.xlsm
+data/*.xlsb
+data/*.csv
+data/*.tsv
+data/*.parquet
+data/*.feather
+data/*.h5
+data/*.hdf5
+data/*.sqlite
+data/*.sqlite3
+data/*.db
+
+# Large/sensitive tables anywhere unless explicitly unignored.
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.sqlite
+*.sqlite3
+*.db
+*.sav
+*.dta
+*.sas7bdat
+
+# CSV/TSV are often generated outputs; keep specific manifests if needed.
+*.csv
+*.tsv
+!data/processed/manifest.csv
+
+# ---------------------------------------------------------------------
+# Outputs, reports, figures, diagnostics
+# ---------------------------------------------------------------------
+
+outputs/**/*
+!outputs/**/
+!outputs/**/.gitkeep
+
+reports/**/*
+figures/**/*
+tables/**/*
+diagnostics/**/*
+
+# ---------------------------------------------------------------------
+# MLflow / model artifacts
+# ---------------------------------------------------------------------
+
+mlruns/
+models/**/*.pkl
+models/**/*.pickle
+models/**/*.joblib
+models/**/*.onnx
+models/**/*.pt
+models/**/*.pth
+models/**/*.ckpt
+models/**/*.bin
+models/**/*.model
+models/**/*.cbm
+models/**/*.lgb
+models/**/*.xgb
+
+# Keep model folder READMEs tracked.
+!models/**/README.md
+!models/README.md
+
+# ---------------------------------------------------------------------
+# Logs and temporary files
+# ---------------------------------------------------------------------
+
+*.log
+logs/
+tmp/
+temp/
+.cache/
+.cache*
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.lock
+*.swp
+*.swo
+~$*
+
+# ---------------------------------------------------------------------
+# OS and IDE files
+# ---------------------------------------------------------------------
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.idea/
+.vscode/
+*.iml
+
+# ---------------------------------------------------------------------
+# Literature and large reference files
+# ---------------------------------------------------------------------
+
+references/**/*.pdf
+references/**/*.docx
+references/**/*.pptx
+references/**/*.xlsx
+references/**/*.xls
+references/**/*.csv
+
+# Keep markdown notes tracked.
+!references/**/*.md
+!references/**/README.md
+
+# ---------------------------------------------------------------------
+# Docker/local runtime
+# ---------------------------------------------------------------------
+
+.docker/
+docker-data/
+volumes/
+.local/
+local/
+storage/
+Add-Content .gitignore "`n# MLflow local SQLite database`nmlflow.db"
+
+# Keep uv lockfile tracked
+!uv.lock

@@ -1,0 +1,269 @@
+# .aiexclude
+# Purpose:
+# Prevent AI assistants from indexing sensitive, private, generated, or heavy project files.
+#
+# Keep this file in the repository root:
+# false-lv-chords/.aiexclude
+#
+# This project contains biomedical research data. Raw data, personal data,
+# environment files, trained models, temporary files, and large generated tables
+# must not be used as AI context unless the user explicitly provides them.
+
+# ----------------------------------------------------------------------
+# Environment and secrets
+# ----------------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+*.secret
+secrets/
+credentials/
+credentials.*
+service-account*.json
+token*.json
+
+# ----------------------------------------------------------------------
+# Raw biomedical data
+# ----------------------------------------------------------------------
+
+data/raw/
+data/raw/**
+
+# Do not index original exports or manually collected files.
+**/raw/**
+**/source/**
+**/original/**
+**/private/**
+**/personal/**
+**/person_data/**
+**/patient_data/**
+**/participants/**
+**/identifiers/**
+
+# ----------------------------------------------------------------------
+# Personal identifiers and sensitive tables
+# ----------------------------------------------------------------------
+
+*personal*
+*private*
+*identifier*
+*identifiers*
+*passport*
+*phone*
+*email*
+*name*
+*fio*
+*ФИО*
+*фио*
+*пациент*
+*пациенты*
+*персональн*
+*личн*
+
+# ----------------------------------------------------------------------
+# Large tabular files and biomedical exports
+# ----------------------------------------------------------------------
+# Keep small synthetic examples or manually created dictionaries visible
+# only if they are placed outside excluded folders.
+
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.sav
+*.dta
+*.sas7bdat
+*.db
+*.sqlite
+*.sqlite3
+
+# Exceptions: allow documentation-like small files if needed.
+!docs/**/*.md
+!docs/**/*.yaml
+!docs/**/*.yml
+!data/README.md
+!data/**/metadata.yaml
+!data/**/metadata.yml
+!data/processed/manifest.csv
+
+# ----------------------------------------------------------------------
+# Processed/interim datasets
+# ----------------------------------------------------------------------
+
+data/interim/
+data/interim/**
+data/processed/
+data/processed/**
+
+# Keep only metadata and manifest visible.
+!data/processed/manifest.csv
+!data/README.md
+
+# ----------------------------------------------------------------------
+# Models, experiment tracking, and artifacts
+# ----------------------------------------------------------------------
+
+models/
+models/**
+mlruns/
+mlruns/**
+artifacts/
+artifacts/**
+checkpoints/
+checkpoints/**
+*.pkl
+*.pickle
+*.joblib
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.model
+*.cbm
+*.lgb
+*.xgb
+
+# ----------------------------------------------------------------------
+# Generated outputs
+# ----------------------------------------------------------------------
+
+outputs/
+outputs/**
+reports/
+reports/**
+figures/
+figures/**
+tables/
+tables/**
+diagnostics/
+diagnostics/**
+
+# If final manuscript text is stored in outputs, explicitly unexclude it later.
+# Example:
+# !outputs/reports/final_report.md
+
+# ----------------------------------------------------------------------
+# Temporary files and caches
+# ----------------------------------------------------------------------
+
+tmp/
+temp/
+.cache/
+.cache/**
+.cache*
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.log
+*.lock
+*.swp
+*.swo
+~$*
+.DS_Store
+Thumbs.db
+
+# ----------------------------------------------------------------------
+# Python and virtual environments
+# ----------------------------------------------------------------------
+
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Keep dependency configuration visible.
+!pyproject.toml
+!uv.lock
+
+# ----------------------------------------------------------------------
+# DVC internals and local storage
+# ----------------------------------------------------------------------
+
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# DVC pipeline files should remain visible.
+!dvc.yaml
+!params.yaml
+
+# ----------------------------------------------------------------------
+# Docker and local runtime volumes
+# ----------------------------------------------------------------------
+
+.docker/
+docker-data/
+volumes/
+.local/
+local/
+storage/
+
+# ----------------------------------------------------------------------
+# Literature PDFs and large reference files
+# ----------------------------------------------------------------------
+
+references/papers/
+references/papers/**
+references/guidelines/
+references/guidelines/**/*.pdf
+references/**/*.pdf
+references/**/*.docx
+references/**/*.pptx
+
+# Keep notes visible.
+!references/notes/
+!references/notes/**
+!references/**/*.md
+
+# ----------------------------------------------------------------------
+# IDE and OS files
+# ----------------------------------------------------------------------
+
+.idea/
+.vscode/
+*.iml
+
+# ----------------------------------------------------------------------
+# Rule of thumb
+# ----------------------------------------------------------------------
+# AI may index:
+# - source code;
+# - configs without secrets;
+# - markdown documentation;
+# - tests;
+# - small metadata files;
+# - synthetic examples explicitly created for sharing.
+#
+# AI must not index:
+# - raw biomedical data;
+# - personal identifiers;
+# - private environment files;
+# - large analytical tables;
+# - model binaries;
+# - generated outputs unless explicitly allowed;
+# - temporary/cache files.

@@ -1,0 +1,142 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Python quality checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          version: "0.11.12"
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install 3.12
+
+      - name: Sync project environment
+        run: uv sync --frozen --group dev
+
+      - name: Show environment
+        run: |
+          uv --version
+          uv run python --version
+          uv run python -c "import sys; print(sys.executable)"
+
+      - name: Check repository safety
+        run: |
+          echo "Checking that private runtime files are not committed..."
+
+          if [ -f ".env" ]; then
+            echo "::error::.env must not be committed. Keep only .env.example."
+            exit 1
+          fi
+
+          if [ -d "mlruns" ]; then
+            echo "::error::mlruns/ must not be committed."
+            exit 1
+          fi
+
+          if [ -d "data/raw" ]; then
+            sensitive_files=$(find data/raw -type f ! -name "metadata.yaml" ! -name "metadata.yml" ! -name "README.md" || true)
+            if [ -n "$sensitive_files" ]; then
+              echo "::error::data/raw contains committed files. Raw biomedical data must not be tracked."
+              echo "$sensitive_files"
+              exit 1
+            fi
+          fi
+
+          forbidden_tables=$(find . \
+            -path "./.git" -prune -o \
+            -path "./.venv" -prune -o \
+            -path "./outputs" -prune -o \
+            -path "./mlruns" -prune -o \
+            -type f \( \
+              -name "*.xlsx" -o -name "*.xls" -o -name "*.xlsm" -o -name "*.xlsb" -o \
+              -name "*.parquet" -o -name "*.feather" -o -name "*.h5" -o -name "*.hdf5" -o \
+              -name "*.sqlite" -o -name "*.sqlite3" -o -name "*.db" \
+            \) -print || true)
+
+          if [ -n "$forbidden_tables" ]; then
+            echo "::error::Large or sensitive tabular/data files are committed. Use DVC or keep them local."
+            echo "$forbidden_tables"
+            exit 1
+          fi
+
+          echo "Repository safety checks passed."
+
+      - name: Validate YAML files
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          for file_name in ["params.yaml", "dvc.yaml"]:
+              path = Path(file_name)
+              if path.exists():
+                  with path.open("r", encoding="utf-8") as f:
+                      yaml.safe_load(f)
+                  print(f"OK: {file_name}")
+              else:
+                  print(f"SKIP: {file_name} does not exist yet")
+          PY
+
+      - name: Check import if package exists
+        run: |
+          if [ -d "src/false_chords" ]; then
+            uv run python -c "import false_chords; print('false_chords import OK')"
+          else
+            echo "src/false_chords does not exist yet; skipping import check."
+          fi
+
+      - name: Ruff lint
+        run: |
+          paths=""
+          [ -d "src" ] && paths="$paths src"
+          [ -d "scripts" ] && paths="$paths scripts"
+          [ -d "tests" ] && paths="$paths tests"
+
+          if [ -n "$paths" ]; then
+            uv run ruff check $paths
+          else
+            echo "No code directories yet; skipping Ruff."
+          fi
+
+      - name: Mypy type check
+        run: |
+          if [ -d "src" ]; then
+            uv run mypy src
+          else
+            echo "No src directory yet; skipping mypy."
+          fi
+
+      - name: Pytest
+        run: |
+          if [ -d "tests" ] && find tests -name "test_*.py" | grep -q .; then
+            uv run pytest
+          else
+            echo "No tests yet; skipping pytest."
+          fi
+
+      - name: DVC syntax/status check if initialized
+        run: |
+          if [ -d ".dvc" ] && [ -f "dvc.yaml" ]; then
+            uv run dvc status --no-remote
+          else
+            echo "DVC is not initialized yet or dvc.yaml is absent; skipping DVC status."
+          fi

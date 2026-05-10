@@ -1,0 +1,390 @@
+# params.yaml
+# Central analysis parameters for the false-lv-chords project.
+#
+# Purpose:
+#   Store parameters that should not be hardcoded in scripts.
+#   DVC can track changes in these parameters and decide which stages
+#   need to be rerun.
+#
+# This file is a living configuration. Update it after data audit and
+# after variable names are confirmed in docs/VARIABLE_DICTIONARY.md.
+
+project:
+  name: "false-lv-chords"
+  version: "0.1.0"
+  random_seed: 42
+  python_version: "3.12"
+  run_mode: "local"
+  analysis_status: "draft"
+  language: "ru"
+
+data:
+  dataset_version: "v0.1"
+  raw_data_dir: "data/raw"
+  interim_data_dir: "data/interim"
+  processed_data_dir: "data/processed"
+  main_source_dataset: "data/final_analysis_dataset.xlsx"
+  processed_dataset_v01: "data/processed/dataset_v0.1.parquet"
+  processed_dataset_v02: "data/processed/dataset_v0.2.parquet"
+  manifest_path: "data/processed/manifest.csv"
+  id_column: "participant_id"
+  original_identifier_columns:
+    - "subject_full_name"
+  allow_personal_identifiers_in_outputs: false
+
+outputs:
+  outputs_dir: "outputs"
+  reports_dir: "outputs/reports"
+  tables_dir: "outputs/tables"
+  figures_dir: "outputs/figures"
+  diagnostics_dir: "outputs/diagnostics"
+  save_xlsx_tables: true
+  save_csv_tables: true
+  save_png_figures: true
+  save_svg_figures: false
+  save_run_manifest: true
+
+privacy:
+  anonymize_outputs: true
+  fail_on_personal_identifiers: true
+  no_participant_row_print: true
+  identifier_patterns:
+    - "fio"
+    - "ФИО"
+    - "subject_full_name"
+    - "name"
+    - "passport"
+    - "phone"
+    - "email"
+    - "address"
+
+validation:
+  missingness_warn_threshold: 0.20
+  missingness_exclude_threshold: 0.50
+  near_constant_unique_threshold: 1
+  duplicate_subject_action: "audit"
+  impossible_values_action: "flag"
+  outlier_detection:
+    enabled: true
+    method: "iqr_and_zscore"
+    zscore_threshold: 4.0
+    iqr_multiplier: 3.0
+  physiological_ranges:
+    age_years:
+      min: 5
+      max: 100
+    height_cm:
+      min: 90
+      max: 230
+    weight_kg:
+      min: 20
+      max: 200
+    body_mass_index_kg_m2:
+      min: 10
+      max: 60
+    body_surface_area_m2:
+      min: 0.5
+      max: 3.0
+    ejection_fraction_pct:
+      min: 10
+      max: 90
+    heart_rate_bpm:
+      min: 30
+      max: 220
+
+domains:
+  demographics_anthropometry:
+    role: "covariates"
+    variables:
+      - "age_years"
+      - "sex"
+      - "height_cm"
+      - "weight_kg"
+      - "body_surface_area_m2"
+      - "body_mass_index_kg_m2"
+
+  chord_phenotype:
+    role: "primary_predictors"
+    variables: []
+    note: "Fill after data audit using docs/VARIABLE_DICTIONARY.md."
+
+  chord_attachment_topology:
+    role: "topological_predictors"
+    variables: []
+    note: "Fill after chord-to-segment mapping is confirmed."
+
+  lv_geometry:
+    role: "outcomes_or_mediators"
+    variables: []
+    note: "Fill after data audit."
+
+  lv_function_echo:
+    role: "secondary_outcomes"
+    variables: []
+    note: "EF is secondary, not the primary endpoint."
+
+  regional_mechanics_dicor:
+    role: "mechanics_outcomes"
+    variables: []
+    note: "Fill after variable dictionary validation."
+
+  regional_strain_ste:
+    role: "primary_mechanics_outcomes"
+    variables: []
+    note: "Segmental strain/strain rate/time-to-peak variables."
+
+  ecg:
+    role: "ecg_outcomes"
+    variables: []
+    note: "Fill after data audit."
+
+covariates:
+  primary_set:
+    - "age_years"
+    - "sex"
+    - "body_surface_area_m2"
+
+  alternative_sets:
+    age_sex_bsa_hr:
+      - "age_years"
+      - "sex"
+      - "body_surface_area_m2"
+      - "heart_rate_bpm"
+
+    age_sex_height_weight:
+      - "age_years"
+      - "sex"
+      - "height_cm"
+      - "weight_kg"
+
+    age_sex_bsa_sport:
+      - "age_years"
+      - "sex"
+      - "body_surface_area_m2"
+      - "sport_group"
+
+  do_not_adjust_by_default:
+    - "lv_geometry_domain_score"
+    - "ef_pct"
+  note: "Potential mediators should not be added automatically to primary models."
+
+feature_engineering:
+  create_local_signature_features: true
+  create_spatial_gradient_features: true
+  create_topological_features: true
+  create_domain_scores: true
+  segment_model: "18_segment_lv"
+  zone_labels:
+    insertion: 0
+    adjacent: 1
+    remote: 2
+  local_signature_features:
+    - "insertion_mean_strain_pct"
+    - "adjacent_mean_strain_pct"
+    - "remote_mean_strain_pct"
+    - "insertion_minus_remote_strain_pct"
+    - "insertion_minus_adjacent_strain_pct"
+    - "adjacent_minus_remote_strain_pct"
+  spatial_gradient_features:
+    - "strain_gradient_slope"
+    - "strain_rate_gradient_slope"
+    - "time_to_peak_gradient_slope"
+    - "gradient_magnitude"
+    - "gradient_direction"
+  topological_features:
+    - "graph_distance_to_chord"
+    - "is_chord_connected_segment"
+    - "is_adjacent_to_chord_segment"
+    - "is_remote_segment"
+    - "mechanical_coupling_connected_segments"
+
+topology:
+  lv_segment_model: "18_segment"
+  graph_definition: "anatomical_adjacency_plus_chord_edge"
+  distance_metric: "shortest_path"
+  adjacent_definition: "graph_distance_1_from_insertion"
+  remote_definition: "graph_distance_ge_2_from_insertion"
+  chord_edge_required: true
+  allow_multiple_chords: true
+  multiple_chords_strategy: "nearest_insertion_or_min_distance"
+
+descriptive:
+  group_by_chord_presence: true
+  group_by_chord_phenotype: true
+  report_mean_sd: true
+  report_median_iqr: true
+  report_n_missing: true
+  report_effect_sizes: true
+
+pca:
+  enabled: true
+  scale: true
+  imputation_strategy: "median_for_numeric_mode_for_categorical"
+  min_complete_fraction_per_variable: 0.70
+  max_components_per_domain: 5
+  explained_variance_threshold: 0.80
+  domains:
+    - "regional_strain_ste"
+    - "lv_geometry"
+    - "lv_function_echo"
+    - "ecg"
+  component_naming: "based_on_loadings_after_fit"
+
+models:
+  analysis_type_default: "exploratory"
+  primary_model_family: "linear_regression"
+  robust_model_family: "robust_linear_model"
+  use_mixed_models_for_segment_level: true
+  compare_base_vs_chord: true
+  standardize_numeric_predictors: true
+  report_standardized_effects: true
+  min_n_per_model: 50
+  max_predictors_in_unpenalized_model: 10
+  primary_hypotheses:
+    - "H_MECH_001_local_mechanical_signature"
+    - "H_MECH_002_spatial_gradient"
+    - "H_MECH_003_phenotype_specific_effect"
+    - "H_GEOM_001_geometry_phenotype"
+    - "H_FUNC_001_global_function_secondary"
+    - "H_ECG_001_ecg_association"
+
+elastic_net:
+  enabled: true
+  analysis_type: "exploratory"
+  standardize: true
+  cv_folds: 5
+  cv_repeats: 5
+  scoring: "r2"
+  alpha_grid:
+    - 0.001
+    - 0.003
+    - 0.01
+    - 0.03
+    - 0.1
+    - 0.3
+    - 1.0
+    - 3.0
+    - 10.0
+  l1_ratio_grid:
+    - 0.1
+    - 0.3
+    - 0.5
+    - 0.7
+    - 0.9
+  selection_frequency_threshold_strong: 0.80
+  selection_frequency_threshold_moderate: 0.60
+
+sparse_pls:
+  enabled: true
+  analysis_type: "exploratory"
+  x_block: "chord_phenotype_plus_topology"
+  y_blocks:
+    - "regional_strain_ste"
+    - "lv_geometry"
+    - "ecg"
+  n_components_grid:
+    - 1
+    - 2
+    - 3
+  sparsity_grid:
+    - 0.10
+    - 0.20
+    - 0.30
+  permutation_n_iter: 1000
+  interpretation: "latent_covariance_not_causality"
+
+bayesian:
+  enabled: false
+  analysis_type: "confirmatory_for_selected_candidates"
+  max_candidate_hypotheses: 3
+  draws: 2000
+  tune: 1000
+  chains: 4
+  target_accept: 0.90
+  prior_type: "weakly_informative_or_shrinkage"
+  report_posterior_probability_direction: true
+
+bootstrap:
+  enabled: false
+  n_iter: 1000
+  confidence_level: 0.95
+  resample_level: "participant"
+  random_seed: 42
+  report_sign_stability: true
+  report_selection_frequency: true
+  sign_stability_threshold_strong: 0.90
+  sign_stability_threshold_moderate: 0.75
+  selection_frequency_threshold_strong: 0.80
+  selection_frequency_threshold_moderate: 0.60
+
+stability:
+  require_stability_for_main_claims: true
+  no_stability_no_strong_interpretation: true
+  min_bootstrap_sign_stability_for_strong_claim: 0.90
+  min_selection_frequency_for_strong_variable_claim: 0.80
+
+fdr:
+  enabled: true
+  method: "benjamini-hochberg"
+  alpha: 0.05
+  families:
+    mechanics:
+      description: "Regional mechanics and strain tests."
+    geometry:
+      description: "LV geometry tests."
+    function:
+      description: "Global function tests."
+    ecg:
+      description: "ECG tests."
+    topology:
+      description: "Topological and graph-distance tests."
+    spatial_gradient:
+      description: "Insertion/adjacent/remote and gradient tests."
+
+missing_data:
+  primary_strategy: "complete_case_for_primary_models"
+  sensitivity_strategy: "simple_imputation"
+  numeric_imputation: "median"
+  categorical_imputation: "mode"
+  add_missing_indicators: false
+  compare_complete_case_vs_imputed: true
+
+outliers:
+  primary_strategy: "flag_not_remove"
+  sensitivity_exclude_high_influence: true
+  robust_regression_sensitivity: true
+  cooks_distance_threshold: "4/n"
+  studentized_residual_threshold: 3.0
+
+sensitivity:
+  enabled: true
+  run_alternative_covariates: true
+  run_outlier_sensitivity: true
+  run_missing_data_sensitivity: true
+  run_chord_encoding_sensitivity: true
+  run_topology_definition_sensitivity: true
+  chord_encodings:
+    - "presence_only"
+    - "presence_plus_count"
+    - "phenotype_classes"
+    - "topological_classes"
+    - "insertion_based_features"
+  topology_definitions:
+    - "strict_insertion_adjacent_remote"
+    - "graph_distance_based"
+    - "alternative_remote_definition"
+
+mlflow:
+  enabled: true
+  tracking_uri: "file:./mlruns"
+  experiment_name: "false-lv-chords-research"
+  log_artifacts: true
+  autolog: false
+
+publication:
+  table_format: "xlsx"
+  figure_format: "png"
+  language: "ru"
+  avoid_causal_language: true
+  distinguish_exploratory_confirmatory: true
+  require_dataset_version_in_outputs: true

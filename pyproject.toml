@@ -1,0 +1,89 @@
+[project]
+name = "false-lv-chords"
+version = "0.1.0"
+description = "Reproducible biomedical research pipeline for studying the physiological and mechanical meaning of left ventricular false chords."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+authors = [
+    { name = "Ars", email = "example@example.com" }
+]
+keywords = [
+    "echocardiography",
+    "false-chords",
+    "left-ventricle",
+    "strain",
+    "biomedical-data-analysis",
+    "speckle-tracking",
+    "physiology"
+]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3.12",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Medical Science Apps."
+]
+
+dependencies = [
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "scipy>=1.12.0",
+    "statsmodels>=0.14.0",
+    "scikit-learn>=1.4.0",
+    "openpyxl>=3.1.0",
+    "pyarrow>=15.0.0",
+    "pydantic>=2.6.0",
+    "pyyaml>=6.0.0",
+    "matplotlib>=3.8.0",
+    "mlflow>=2.10.0",
+    "dvc>=3.40.0",
+    "networkx>=3.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+    "ipykernel>=6.29.0",
+    "jupyterlab>=4.1.0",
+]
+
+bayesian = [
+    "pymc>=5.10.0",
+    "arviz>=0.17.0",
+    "bambi>=0.13.0",
+]
+
+[project.urls]
+Repository = "https://example.com/private/false-lv-chords"
+Documentation = "https://example.com/private/false-lv-chords/docs"
+
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/false_chords"]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "scripts", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+ignore_missing_imports = true
+mypy_path = "src"

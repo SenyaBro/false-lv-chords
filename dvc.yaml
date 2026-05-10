@@ -1,0 +1,310 @@
+# dvc.yaml
+# Reproducible pipeline for the false-lv-chords project.
+#
+# Purpose:
+#   raw data -> validation -> processed dataset -> feature engineering
+#   -> models -> stability -> tables/figures/reports
+#
+# Important:
+#   This is a starter pipeline skeleton.
+#   It becomes executable only after the corresponding scripts are implemented.
+#
+# Common commands:
+#   dvc repro
+#   dvc status
+#   dvc dag
+#   dvc params diff
+#
+# Notes:
+#   - Raw data are intentionally not committed to Git.
+#   - Large outputs and processed datasets can be tracked by DVC later.
+#   - The stage params below point to keys in params.yaml.
+
+stages:
+  validate_data:
+    desc: "Audit raw input data, check schema, missingness, impossible values, and personal identifiers."
+    cmd: python scripts/validate_data.py --params params.yaml
+    deps:
+      - scripts/validate_data.py
+      - src/false_chords/config.py
+      - src/false_chords/data_schema.py
+      - src/false_chords/validation.py
+      - params.yaml
+    params:
+      - project
+      - data
+      - validation
+      - privacy
+    outs:
+      - outputs/diagnostics/data_validation_report.md
+      - outputs/tables/variable_type_audit.xlsx
+      - outputs/tables/missingness_summary.xlsx
+      - outputs/tables/outlier_candidates.xlsx
+
+  build_dataset:
+    desc: "Build processed analytical dataset from validated raw/interim sources."
+    cmd: python scripts/build_dataset.py --params params.yaml
+    deps:
+      - scripts/build_dataset.py
+      - src/false_chords/config.py
+      - src/false_chords/validation.py
+      - src/false_chords/features.py
+      - params.yaml
+      - outputs/diagnostics/data_validation_report.md
+    params:
+      - project
+      - data
+      - validation
+      - feature_engineering
+      - privacy
+    outs:
+      - data/processed/dataset_v0.1.parquet
+      - data/processed/manifest.csv
+      - outputs/diagnostics/build_dataset_manifest.json
+
+  feature_engineering:
+    desc: "Create chord phenotype, regional mechanics, spatial gradient, and topological features."
+    cmd: python scripts/build_features.py --params params.yaml
+    deps:
+      - scripts/build_features.py
+      - src/false_chords/config.py
+      - src/false_chords/features.py
+      - src/false_chords/spatial_topology.py
+      - params.yaml
+      - data/processed/dataset_v0.1.parquet
+    params:
+      - project
+      - data
+      - feature_engineering
+      - topology
+    outs:
+      - data/processed/dataset_v0.2.parquet
+      - outputs/tables/feature_dictionary.xlsx
+      - outputs/tables/derived_features_summary.xlsx
+      - outputs/diagnostics/feature_engineering_manifest.json
+
+  descriptive_physiology:
+    desc: "Generate descriptive physiology tables and figures."
+    cmd: python scripts/export_descriptive.py --params params.yaml
+    deps:
+      - scripts/export_descriptive.py
+      - src/false_chords/config.py
+      - src/false_chords/visualization.py
+      - src/false_chords/reporting.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+    params:
+      - project
+      - data
+      - descriptive
+      - outputs
+    outs:
+      - outputs/tables/descriptive_physiology.xlsx
+      - outputs/tables/chord_phenotype_distribution.xlsx
+      - outputs/tables/domain_summary_statistics.xlsx
+      - outputs/figures/chord_distribution_plot.png
+      - outputs/reports/descriptive_physiology_report.md
+
+  pca_domains:
+    desc: "Run PCA within predefined physiological domains."
+    cmd: python scripts/run_pca.py --params params.yaml
+    deps:
+      - scripts/run_pca.py
+      - src/false_chords/config.py
+      - src/false_chords/models.py
+      - src/false_chords/visualization.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+    params:
+      - project
+      - data
+      - pca
+      - domains
+    outs:
+      - outputs/tables/pca_explained_variance.xlsx
+      - outputs/tables/pca_loadings_by_domain.xlsx
+      - outputs/tables/pca_scores_summary.xlsx
+      - outputs/figures/pca_explained_variance_mechanics.png
+      - outputs/reports/pca_domain_report.md
+
+  primary_models:
+    desc: "Run primary mechanistic models: local signature, spatial gradient, topology, geometry, ECG."
+    cmd: python scripts/train_model.py --params params.yaml
+    deps:
+      - scripts/train_model.py
+      - src/false_chords/config.py
+      - src/false_chords/models.py
+      - src/false_chords/stability.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+      - outputs/tables/pca_scores_summary.xlsx
+    params:
+      - project
+      - data
+      - covariates
+      - models
+      - domains
+      - fdr
+    outs:
+      - outputs/tables/primary_mechanistic_models.xlsx
+      - outputs/tables/model_comparison_base_vs_chord.xlsx
+      - outputs/tables/regional_contrast_models.xlsx
+      - outputs/tables/spatial_gradient_models.xlsx
+      - outputs/figures/primary_effect_size_plot.png
+      - outputs/figures/spatial_gradient_plot.png
+      - outputs/reports/primary_mechanistic_models_report.md
+      - models/baseline/model_summary.json
+
+  elastic_net:
+    desc: "Run Elastic Net models for exploratory stable feature selection."
+    cmd: python scripts/run_elastic_net.py --params params.yaml
+    deps:
+      - scripts/run_elastic_net.py
+      - src/false_chords/config.py
+      - src/false_chords/models.py
+      - src/false_chords/stability.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+    params:
+      - project
+      - data
+      - covariates
+      - elastic_net
+      - models
+    outs:
+      - outputs/tables/elastic_net_model_results.xlsx
+      - outputs/tables/elastic_net_selection_frequency.xlsx
+      - outputs/tables/elastic_net_coefficient_stability.xlsx
+      - outputs/figures/elastic_net_selection_frequency.png
+      - models/elastic_net/model_summary.json
+
+  sparse_pls:
+    desc: "Run sparse PLS block-to-block exploratory analysis."
+    cmd: python scripts/run_sparse_pls.py --params params.yaml
+    deps:
+      - scripts/run_sparse_pls.py
+      - src/false_chords/config.py
+      - src/false_chords/models.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+    params:
+      - project
+      - data
+      - sparse_pls
+      - domains
+    outs:
+      - outputs/tables/sparse_pls_x_loadings.xlsx
+      - outputs/tables/sparse_pls_y_loadings.xlsx
+      - outputs/tables/sparse_pls_scores.xlsx
+      - outputs/figures/sparse_pls_biplot.png
+      - outputs/reports/sparse_pls_report.md
+      - models/sparse_pls/model_summary.json
+
+  bootstrap_stability:
+    desc: "Run bootstrap stability checks for primary and exploratory findings."
+    cmd: python scripts/run_bootstrap.py --params params.yaml
+    deps:
+      - scripts/run_bootstrap.py
+      - src/false_chords/config.py
+      - src/false_chords/models.py
+      - src/false_chords/stability.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+      - outputs/tables/primary_mechanistic_models.xlsx
+      - outputs/tables/elastic_net_selection_frequency.xlsx
+    params:
+      - project
+      - data
+      - bootstrap
+      - stability
+      - models
+    outs:
+      - outputs/tables/bootstrap_effect_stability.xlsx
+      - outputs/tables/bootstrap_selection_frequency.xlsx
+      - outputs/figures/bootstrap_effect_intervals.png
+      - outputs/figures/bootstrap_selection_frequency.png
+      - outputs/reports/bootstrap_stability_report.md
+
+  sensitivity_analyses:
+    desc: "Run sensitivity analyses for covariates, outliers, missingness, and topology definitions."
+    cmd: python scripts/run_sensitivity.py --params params.yaml
+    deps:
+      - scripts/run_sensitivity.py
+      - src/false_chords/config.py
+      - src/false_chords/models.py
+      - src/false_chords/stability.py
+      - params.yaml
+      - data/processed/dataset_v0.2.parquet
+      - outputs/tables/primary_mechanistic_models.xlsx
+    params:
+      - project
+      - data
+      - sensitivity
+      - covariates
+      - topology
+      - missing_data
+      - outliers
+    outs:
+      - outputs/tables/sensitivity_analysis_summary.xlsx
+      - outputs/tables/covariate_set_comparison.xlsx
+      - outputs/tables/outlier_sensitivity_results.xlsx
+      - outputs/tables/missing_data_sensitivity_results.xlsx
+      - outputs/figures/sensitivity_effect_comparison.png
+      - outputs/reports/sensitivity_analysis_report.md
+
+  export_tables:
+    desc: "Export manuscript/dissertation-ready tables."
+    cmd: python scripts/export_tables.py --params params.yaml
+    deps:
+      - scripts/export_tables.py
+      - src/false_chords/reporting.py
+      - params.yaml
+      - outputs/tables/descriptive_physiology.xlsx
+      - outputs/tables/primary_mechanistic_models.xlsx
+      - outputs/tables/bootstrap_effect_stability.xlsx
+      - outputs/tables/sensitivity_analysis_summary.xlsx
+    params:
+      - project
+      - outputs
+      - publication
+    outs:
+      - outputs/tables/manuscript_tables.xlsx
+
+  export_figures:
+    desc: "Export manuscript/dissertation-ready figures."
+    cmd: python scripts/export_figures.py --params params.yaml
+    deps:
+      - scripts/export_figures.py
+      - src/false_chords/visualization.py
+      - params.yaml
+      - outputs/figures/spatial_gradient_plot.png
+      - outputs/figures/bootstrap_effect_intervals.png
+      - outputs/figures/elastic_net_selection_frequency.png
+    params:
+      - project
+      - outputs
+      - publication
+    outs:
+      - outputs/figures/manuscript_figure_index.json
+
+  build_report:
+    desc: "Build final integrated analysis report."
+    cmd: python scripts/build_report.py --params params.yaml
+    deps:
+      - scripts/build_report.py
+      - src/false_chords/reporting.py
+      - params.yaml
+      - outputs/reports/descriptive_physiology_report.md
+      - outputs/reports/primary_mechanistic_models_report.md
+      - outputs/reports/pca_domain_report.md
+      - outputs/reports/bootstrap_stability_report.md
+      - outputs/reports/sensitivity_analysis_report.md
+      - outputs/tables/manuscript_tables.xlsx
+      - outputs/figures/manuscript_figure_index.json
+    params:
+      - project
+      - publication
+      - outputs
+    outs:
+      - outputs/reports/final_integrated_analysis_report.md
+      - outputs/diagnostics/final_report_manifest.json
