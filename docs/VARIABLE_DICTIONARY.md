@@ -476,6 +476,8 @@ draft_migrated_from_legacy_excel
 | `strain_plus_apical_inferolateral_chord_attachment_flag` | AIL_chord_attachment | Strein_CHORDS | chord_attachment_topology | binary | 0/1 | derived_topological_predictor | 0/1; confirm coding during audit | TBD after data audit; do not treat 0 as missing for count/flag variables | Segment-level chord attachment marker for topology/local signature: AIL_chord_attachment |  |
 | `strain_plus_apical_inferior_chord_attachment_flag` | AI_chord_attachment | Strein_CHORDS | chord_attachment_topology | binary | 0/1 | derived_topological_predictor | 0/1; confirm coding during audit | TBD after data audit; do not treat 0 as missing for count/flag variables | Segment-level chord attachment marker for topology/local signature: AI_chord_attachment |  |
 | `strain_plus_apical_inferoseptal_chord_attachment_flag` | AIS_chord_attachment | Strein_CHORDS | chord_attachment_topology | binary | 0/1 | derived_topological_predictor | 0/1; confirm coding during audit | TBD after data audit; do not treat 0 as missing for count/flag variables | Segment-level chord attachment marker for topology/local signature: AIS_chord_attachment |  |
+| `exercise_metabolic_equivalent_mets` | МЕТ | Work | exercise_test | numeric_continuous | METs | exercise_covariate_or_secondary_outcome | physiological numeric range; define after audit | TBD after data audit; do not treat 0 as missing for count/flag variables | Exercise/load-test physiology variable: MET |  |
+| `exercise_vo2_max_ml_kg_min` | МПК | Work | exercise_test | numeric_continuous | ml/kg/min | exercise_covariate_or_secondary_outcome | physiological numeric range; define after audit | TBD after data audit; do not treat 0 as missing for count/flag variables | Exercise/load-test physiology variable: МПК |  |
 
 ---
 
@@ -511,6 +513,16 @@ draft_migrated_from_legacy_excel
 | `is_adjacent_to_chord_segment` | derived_topology | binary | 0/1 | derived_topological_predictor | Сегмент соседствует с зоной прикрепления |
 | `is_remote_segment` | derived_topology | binary | 0/1 | derived_topological_predictor | Сегмент удалён от хорды |
 | `mechanical_coupling_connected_segments` | derived_topology | numeric_continuous | TBD | exploratory_outcome | Согласованность механики сегментов, соединённых хордой |
+
+### 10.4. Global mechanical dispersion
+
+| variable_name | domain | data_type | unit | model_role | biological_meaning |
+|---|---|---|---|---|---|
+| `echo_lv_strain_plus_cv_pct` | regional_strain_ste | numeric_continuous | % | mechanics_outcome | Coefficient of variation (CV) for segmental strain (dispersion) |
+| `echo_lv_strain_rate_cv_pct` | regional_strain_ste | numeric_continuous | % | mechanics_outcome | Coefficient of variation (CV) for segmental strain rate |
+| `dicor_sm_kdtr_cv_pct` | lv_geometry | numeric_continuous | % | geometry_outcome_or_mediator | Coefficient of variation (CV) for DICOR СМ КДТР |
+| `dicor_ssou_cv_pct` | regional_mechanics_dicor | numeric_continuous | % | mechanics_outcome | Coefficient of variation (CV) for DICOR ССОУ |
+
 
 ---
 

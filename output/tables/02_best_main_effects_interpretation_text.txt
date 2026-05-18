@@ -1,0 +1,12 @@
+For dicor_sm_kdtr_cv_pct, the best main-effect mechanistic predictor was chord_type_complexity_class (categorical; n=68, R²=0.050, adjusted R²=0.021, HC3 omnibus p=0.029). Highest-minus-lowest group mean = 15.123.
+
+For dicor_ssou_cv_pct, the best main-effect mechanistic predictor was chord_type_diversity (numeric; n=68, R²=0.086, adjusted R²=0.072, HC3 omnibus p=0.033). Beta = 3.333; Spearman rho = 0.250.
+
+For echo_lv_end_systolic_diameter_mm, the best main-effect mechanistic predictor was mechanical_chord_phenotype (categorical; n=89, R²=0.116, adjusted R²=0.096, HC3 omnibus p=0.003). Highest-minus-lowest group mean = 3.990.
+
+For echo_lv_sphericity_index_end_systolic_ratio, the best main-effect mechanistic predictor was tethering_index (numeric; n=100, R²=0.110, adjusted R²=0.101, HC3 omnibus p=0.000). Beta = -0.008; Spearman rho = -0.293.
+
+For echo_lv_strain_plus_cv_pct, the best main-effect mechanistic predictor was mechanical_chord_phenotype (categorical; n=32, R²=0.282, adjusted R²=0.233, HC3 omnibus p=0.108). Highest-minus-lowest group mean = 20.575.
+
+For echo_lv_strain_rate_cv_pct, the best main-effect mechanistic predictor was mechanical_chord_phenotype (categorical; n=32, R²=0.435, adjusted R²=0.396, HC3 omnibus p=0.028). Highest-minus-lowest group mean = 51.675.
+

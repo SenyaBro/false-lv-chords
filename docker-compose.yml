@@ -1,0 +1,87 @@
+# docker-compose.yml
+# Local Docker Compose setup for the false-lv-chords project.
+#
+# Main use cases:
+#   1. Start a reproducible research container.
+#   2. Start MLflow UI locally.
+#   3. Share a predictable runtime setup with another researcher.
+#
+# Common commands:
+#   docker compose build
+#   docker compose run --rm research
+#   docker compose run --rm research uv run python --version
+#   docker compose up mlflow
+#
+# MLflow UI:
+#   http://127.0.0.1:5000
+#
+# Important:
+#   - Raw data remain local and are mounted from ./data.
+#   - .env is not required here because Windows paths inside .env are not valid inside Linux containers.
+#   - Container paths use /app/...
+
+services:
+  research:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: false-lv-chords:latest
+    container_name: false-lv-chords-research
+    working_dir: /app
+    environment:
+      PROJECT_NAME: false-lv-chords
+      PROJECT_ROOT: /app
+      RUN_MODE: docker
+      APP_ENV: development
+      PYTHONPATH: /app/src
+      MLFLOW_TRACKING_URI: sqlite:////app/mlflow.db
+      MLFLOW_EXPERIMENT_NAME: false-lv-chords-research
+      DATA_DIR: /app/data
+      RAW_DATA_DIR: /app/data/raw
+      INTERIM_DATA_DIR: /app/data/interim
+      PROCESSED_DATA_DIR: /app/data/processed
+      OUTPUTS_DIR: /app/outputs
+      REPORTS_DIR: /app/outputs/reports
+      TABLES_DIR: /app/outputs/tables
+      FIGURES_DIR: /app/outputs/figures
+      DIAGNOSTICS_DIR: /app/outputs/diagnostics
+    volumes:
+      - ./data:/app/data
+      - ./outputs:/app/outputs
+      - ./models:/app/models
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+    command: bash
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: false-lv-chords:latest
+    container_name: false-lv-chords-mlflow
+    working_dir: /app
+    environment:
+      PROJECT_NAME: false-lv-chords
+      PROJECT_ROOT: /app
+      RUN_MODE: docker
+      APP_ENV: development
+      MLFLOW_TRACKING_URI: sqlite:////app/mlflow.db
+      MLFLOW_EXPERIMENT_NAME: false-lv-chords-research
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+      - ./outputs:/app/outputs
+      - ./models:/app/models
+    ports:
+      - "5000:5000"
+    command:
+      - mlflow
+      - ui
+      - --host
+      - 0.0.0.0
+      - --port
+      - "5000"
+      - --backend-store-uri
+      - sqlite:////app/mlflow.db
+      - --default-artifact-root
+      - /app/mlruns

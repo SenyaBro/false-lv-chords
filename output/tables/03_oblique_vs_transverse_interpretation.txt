@@ -1,0 +1,48 @@
+Equation:
+echo_lv_strain_rate_cv_pct = -32.743 + -11.622 × I(Transverse-Involved) + ε
+
+Interpretation:
+For echo_lv_strain_rate_cv_pct, the direct contrast Oblique-Only vs Transverse-Involved included n=29 classified patients (Oblique-Only: n=11; Transverse-Involved: n=18). The regression coefficient for Transverse-Involved was -11.622, meaning that this group differed from Oblique-Only by this amount on average. Model fit: R²=0.139, adjusted R²=0.107, HC3 p=0.040. Effect size: Hedges g=-0.775. Bootstrap 95% CI for the mean difference: [-21.407; -1.794].
+
+----------------------------------------------------------------------------------------------------
+
+Equation:
+dicor_ssou_cv_pct = 24.121 + 6.830 × I(Transverse-Involved) + ε
+
+Interpretation:
+For dicor_ssou_cv_pct, the direct contrast Oblique-Only vs Transverse-Involved included n=68 classified patients (Oblique-Only: n=21; Transverse-Involved: n=47). The regression coefficient for Transverse-Involved was 6.830, meaning that this group differed from Oblique-Only by this amount on average. Model fit: R²=0.057, adjusted R²=0.043, HC3 p=0.020. Effect size: Hedges g=0.518. Bootstrap 95% CI for the mean difference: [1.321; 12.354].
+
+----------------------------------------------------------------------------------------------------
+
+Equation:
+echo_lv_end_systolic_diameter_mm = 32.190 + -2.003 × I(Transverse-Involved) + ε
+
+Interpretation:
+For echo_lv_end_systolic_diameter_mm, the direct contrast Oblique-Only vs Transverse-Involved included n=69 classified patients (Oblique-Only: n=21; Transverse-Involved: n=48). The regression coefficient for Transverse-Involved was -2.003, meaning that this group differed from Oblique-Only by this amount on average. Model fit: R²=0.052, adjusted R²=0.038, HC3 p=0.074. Effect size: Hedges g=-0.495. Bootstrap 95% CI for the mean difference: [-4.080; 0.081].
+
+----------------------------------------------------------------------------------------------------
+
+Equation:
+echo_lv_sphericity_index_end_systolic_ratio = 0.480 + -0.029 × I(Transverse-Involved) + ε
+
+Interpretation:
+For echo_lv_sphericity_index_end_systolic_ratio, the direct contrast Oblique-Only vs Transverse-Involved included n=96 classified patients (Oblique-Only: n=31; Transverse-Involved: n=65). The regression coefficient for Transverse-Involved was -0.029, meaning that this group differed from Oblique-Only by this amount on average. Model fit: R²=0.029, adjusted R²=0.018, HC3 p=0.129. Effect size: Hedges g=-0.361. Bootstrap 95% CI for the mean difference: [-0.065; 0.007].
+
+----------------------------------------------------------------------------------------------------
+
+Equation:
+dicor_sm_kdtr_cv_pct = 20.893 + 0.039 × I(Transverse-Involved) + ε
+
+Interpretation:
+For dicor_sm_kdtr_cv_pct, the direct contrast Oblique-Only vs Transverse-Involved included n=68 classified patients (Oblique-Only: n=21; Transverse-Involved: n=47). The regression coefficient for Transverse-Involved was 0.039, meaning that this group differed from Oblique-Only by this amount on average. Model fit: R²=0.000, adjusted R²=-0.015, HC3 p=0.994. Effect size: Hedges g=0.002. Bootstrap 95% CI for the mean difference: [-10.437; 9.577].
+
+----------------------------------------------------------------------------------------------------
+
+Equation:
+echo_lv_strain_plus_cv_pct = -24.137 + 0.324 × I(Transverse-Involved) + ε
+
+Interpretation:
+For echo_lv_strain_plus_cv_pct, the direct contrast Oblique-Only vs Transverse-Involved included n=29 classified patients (Oblique-Only: n=11; Transverse-Involved: n=18). The regression coefficient for Transverse-Involved was 0.324, meaning that this group differed from Oblique-Only by this amount on average. Model fit: R²=0.000, adjusted R²=-0.037, HC3 p=0.932. Effect size: Hedges g=0.032. Bootstrap 95% CI for the mean difference: [-6.589; 6.949].
+
+----------------------------------------------------------------------------------------------------
+
