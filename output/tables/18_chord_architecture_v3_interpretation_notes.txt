@@ -1,0 +1,67 @@
+# Interpretation notes: chord architecture v3
+
+## Group counts
+
+- nan: n = 64
+- 4_Chord_network: n = 62
+- 3_Double_transverse_no_long_oblique: n = 11
+- 2_Single_long_oblique_bridge: n = 8
+- 1_Local_transverse_or_low_angle: n = 8
+
+## Outcome availability
+
+
+### Индекс сферичности ЛЖ, КД
+- total n = 69
+- 1_Local_transverse_or_low_angle: n = 8
+- 2_Single_long_oblique_bridge: n = 8
+- 3_Double_transverse_no_long_oblique: n = 11
+- 4_Chord_network: n = 42
+
+### Индекс сферичности ЛЖ, КС
+- total n = 69
+- 1_Local_transverse_or_low_angle: n = 8
+- 2_Single_long_oblique_bridge: n = 8
+- 3_Double_transverse_no_long_oblique: n = 11
+- 4_Chord_network: n = 42
+
+### Индекс массы миокарда ЛЖ, г/м²
+- total n = 58
+- 1_Local_transverse_or_low_angle: n = 3
+- 2_Single_long_oblique_bridge: n = 5
+- 3_Double_transverse_no_long_oblique: n = 7
+- 4_Chord_network: n = 43
+
+### ΔSWS ЛЖ, г/см²
+- total n = 21
+- 1_Local_transverse_or_low_angle: n = 2
+- 2_Single_long_oblique_bridge: n = 3
+- 3_Double_transverse_no_long_oblique: n = 2
+- 4_Chord_network: n = 14
+
+### CV деформации ЛЖ, %
+- total n = 69
+- 1_Local_transverse_or_low_angle: n = 7
+- 2_Single_long_oblique_bridge: n = 8
+- 3_Double_transverse_no_long_oblique: n = 11
+- 4_Chord_network: n = 43
+
+### DICOR KDTR CV, %
+- total n = 47
+- 1_Local_transverse_or_low_angle: n = 5
+- 2_Single_long_oblique_bridge: n = 7
+- 3_Double_transverse_no_long_oblique: n = 8
+- 4_Chord_network: n = 27
+
+## Kruskal-Wallis screening
+
+- Индекс массы миокарда ЛЖ, г/м² (`echo_lv_myocardial_mass_index_g_m2`): n = 58, H = 7.861, p = 0.0490
+- CV деформации ЛЖ, % (`merged_lv_deformation_cv_pct`): n = 69, H = 4.322, p = 0.2287
+- ΔSWS ЛЖ, г/см² (`echo_lv_sws_delta_g_cm2`): n = 21, H = 2.847, p = 0.4158
+- DICOR KDTR CV, % (`dicor_sm_kdtr_cv_pct`): n = 47, H = 0.768, p = 0.8571
+- Индекс сферичности ЛЖ, КС (`echo_lv_sphericity_index_end_systolic_ratio`): n = 69, H = 0.385, p = 0.9434
+- Индекс сферичности ЛЖ, КД (`echo_lv_sphericity_index_end_diastolic_ratio`): n = 69, H = 0.365, p = 0.9474
+
+## Methodological note
+
+This is an exploratory mechanistic classification. Unclassified cases were not automatically assigned to the network group. Pure apical topology was excluded according to the current working rule. If some groups have very small n, they should be interpreted descriptively rather than confirmatorily.
