@@ -24,15 +24,6 @@
   <em>Демонстрация работы интерактивной 3D-модели левого желудочка</em>
 </p>
 
-* **[lv_18_segment_model.html](file:///c:/Users/Ars/projects/university/lab_urfu_2026/false-lv-chords/lv_18_segment_model.html)** — интерактивная 18-сегментная модель ЛЖ, показывающая стандартное деление стенки миокарда на сегменты (согласно рекомендациям AHA).
-* **[lv_healthy_model.html](file:///c:/Users/Ars/projects/university/lab_urfu_2026/false-lv-chords/lv_healthy_model.html)** — модель недеформированного («здорового») левого желудочка.
-* **[lv_mechanics_model.html](file:///c:/Users/Ars/projects/university/lab_urfu_2026/false-lv-chords/lv_mechanics_model.html)** — 3D-модель, визуализирующая локальные векторы и паттерны деформации миокарда.
-* **[lv_thick_wall_model.html](file:///c:/Users/Ars/projects/university/lab_urfu_2026/false-lv-chords/lv_thick_wall_model.html)** — реалистичная толстостенная модель, учитывающая толщину стенки ЛЖ.
-* **[lv_twist_texture.html](file:///c:/Users/Ars/projects/university/lab_urfu_2026/false-lv-chords/lv_twist_texture.html)** — визуализация ротационной механики (кручения/twist) ЛЖ при сокращении.
-* **[lv_computational_physics.html](file:///c:/Users/Ars/projects/university/lab_urfu_2026/false-lv-chords/lv_computational_physics.html)** — физико-математическая визуализация распределения нагрузок на миокард.
-
-> **Как открыть:** Файлы автономны. Вы можете открыть любой из них в обычном веб-браузере (двойным кликом). Внутри можно вращать камеру мышкой, приближать отдельные зоны и просматривать подсказки при наведении.
-
 ---
 
 ## 3. Ключевые научные результаты исследования
